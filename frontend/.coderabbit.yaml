@@ -1,0 +1,23 @@
+# .coderabbit.yaml
+language: "en-US"
+early_access: false
+reviews:
+  profile: "chill"
+  request_changes_workflow: false
+  high_level_summary: true
+  instructions: |
+    You are an expert frontend engineer reviewing a Next.js application.
+    - This project uses Next.js App Router (`app/` directory), React Hook Form, Zod, and Tailwind CSS.
+    - Ensure there are no leftover `console.log` statements.
+    - Ensure all API calls use the instance from `lib/api.ts` (do not use raw fetch or axios).
+    - Ensure all UI components are responsive using Tailwind classes.
+    - Flag any implicit `any` types in TypeScript.
+    - Avoid creating local state if Zustand should be used for global state management.
+  auto_review:
+    enabled: true
+    drafts: false
+    base_branches:
+      - "main"
+      - "develop"
+chat:
+  auto_reply: true
