@@ -12,8 +12,8 @@ const verifyMahasiswa = async (req, res) => {
 
 const updateVotedStatus = async (req, res) => {
     try {
-        const { nim } = req.body;
-        await updateVotedStatusDB(nim);
+        const { nim, wallet_address } = req.body
+        await updateVotedStatusDB(nim,wallet_address);
         res.json({ success: true, message: "Status voting berhasil diperbarui." });
     } catch (err) {
         res.status(400).json({ success: false, message: err.message });

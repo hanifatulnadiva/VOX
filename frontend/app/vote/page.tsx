@@ -13,7 +13,7 @@ export default function VoxVotingPage() {
   const handleVerifyNim = async () => {
     setStatusMsg("Memverifikasi NIM...");
     try {
-      const res = await fetch("http://localhost:3000/api/verify", {
+      const res = await fetch("http://localhost:5000/api/verify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ nim }),
@@ -39,6 +39,7 @@ export default function VoxVotingPage() {
     try {
       const provider = new ethers.BrowserProvider((window as any).ethereum);
       const signer = await provider.getSigner();
+      const walletAddress = await signer.getAddress();
       const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS as string;
       const contract = new ethers.Contract(contractAddress, VoxElectionABI.abi, signer);
 
@@ -49,10 +50,10 @@ export default function VoxVotingPage() {
 
       // 3. Fase Penguncian (Memanggil API Backend)
       setStatusMsg("Transaksi sukses! Mengunci status vote di database...");
-      await fetch("http://localhost:3000/api/update-status", {
+      await fetch("http://localhost:5000/api/update-status", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nim }),
+        body: JSON.stringify({ nim, wallet_address: walletAddress }),
       });
 
       setStatusMsg("Terima kasih, suara Anda telah masuk ke kotak suara blockchain!");

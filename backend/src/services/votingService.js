@@ -29,10 +29,10 @@ const verifyMahasiswaDB = async (nim, wallet_address) => {
     return { nama: data.nama, nim: data.nim };
 };
 
-const updateVotedStatusDB = async (nim) => {
+const updateVotedStatusDB = async (nim, wallet_address) => {
     const { error } = await supabase
         .from('mahasiswa')
-        .update({ has_voted: true })
+        .update({ has_voted: true,wallet_address: wallet_address })
         .eq('nim', nim);
 
     if (error) throw new Error("Gagal memperbarui status voting.");
