@@ -9,9 +9,14 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@getpara/evm-wallet-connectors": "^3.24.0",
+    "@getpara/react-sdk": "^3.24.0",
+    "@tanstack/react-query": "^5.104.5",
     "next": "^16.4.3",
     "react": "^19.3.1",
-    "react-dom": "^19.3.1"
+    "react-dom": "^19.3.1",
+    "viem": "^2.57.11",
+    "wagmi": "^3.7.9"
   },
   "devDependencies": {
     "@tailwindcss/turbopack": "^4",
