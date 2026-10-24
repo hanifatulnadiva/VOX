@@ -18,16 +18,26 @@ export const votingApi: VoterVerificationPort = {
       throw new Error("NEXT_PUBLIC_API_BASE_URL belum diatur.");
     }
 
-    const response = await fetch(`${apiUrl}/api/verify`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        nim: input.nim,
-        wallet_address: input.walletAddress,
-      }),
-    });
+    let response: Response;
+    try {
+      response = await fetch(`${apiUrl}/api/verify`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nim: input.nim,
+          wallet_address: input.walletAddress,
+        }),
+      });
+    } catch {
+      throw new Error("Tidak dapat menghubungi server. Cek backend / CORS.");
+    }
 
-    const result = (await response.json()) as ApiResponse<VerifiedVoter>;
+    let result: ApiResponse<VerifiedVoter> | null = null;
+    try {
+      result = (await response.json()) as ApiResponse<VerifiedVoter>;
+    } catch {
+      throw new Error(`Respons server tidak valid (HTTP ${response.status}).`);
+    }
 
     if (!response.ok || !result.success || !result.data) {
       throw new Error(result.message || "Verifikasi pemilih gagal.");

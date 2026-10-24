@@ -6,11 +6,12 @@ import { WagmiProvider, createConfig, http } from "wagmi";
 import { injected } from "wagmi/connectors";
 import { monadTestnet } from "wagmi/chains";
 
-const rpcUrl = process.env.NEXT_PUBLIC_MONAD_TESTNET_RPC_URL;
+const rpcUrl = process.env.NEXT_PUBLIC_MONAD_RPC_URL;
 
 const wagmiConfig = createConfig({
   chains: [monadTestnet],
   connectors: [injected()],
+  ssr: true,
   transports: {
     [monadTestnet.id]: rpcUrl ? http(rpcUrl) : http(),
   },

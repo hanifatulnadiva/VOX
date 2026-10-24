@@ -1,18 +1,22 @@
 "use client";
 
-import { useAccount, useReadContract, useWriteContract } from "wagmi";
+import { useMemo } from "react";
+import { useAccount, useReadContract, useSwitchChain, useWriteContract } from "wagmi";
 import { monadTestnet } from "wagmi/chains";
 import { getElectionAddress, voxElectionAbi } from "../infrastructure/vox-election";
 
 export function useVoting() {
   const { address, chainId } = useAccount();
-  const contractAddress = getElectionAddress();
-  const { writeContractAsync, isPending, error } = useWriteContract();
+  const { switchChainAsync } = useSwitchChain();
+  const { writeContractAsync, isPending } = useWriteContract();
+  const election = useMemo(() => getElectionAddress(), []);
+  const contractAddress = election.address;
 
   const candidatesCountQuery = useReadContract({
     address: contractAddress,
     abi: voxElectionAbi,
     functionName: "candidatesCount",
+    chainId: monadTestnet.id,
     query: { enabled: Boolean(contractAddress) },
   });
 
@@ -21,12 +25,12 @@ export function useVoting() {
       throw new Error("Hubungkan wallet terlebih dahulu.");
     }
 
-    if (chainId !== monadTestnet.id) {
-      throw new Error("Pindahkan wallet ke Monad Testnet.");
+    if (!contractAddress) {
+      throw new Error(election.error ?? "Alamat kontrak belum diatur.");
     }
 
-    if (!contractAddress) {
-      throw new Error("Alamat kontrak belum diatur.");
+    if (chainId !== monadTestnet.id) {
+      await switchChainAsync({ chainId: monadTestnet.id });
     }
 
     return writeContractAsync({
@@ -34,16 +38,17 @@ export function useVoting() {
       abi: voxElectionAbi,
       functionName: "vote",
       args: [candidateId],
+      chainId: monadTestnet.id,
     });
   }
 
   return {
     contractAddress,
+    configError: election.error,
     candidatesCount: candidatesCountQuery.data,
-    isLoadingCandidates: candidatesCountQuery.isPending,
+    isLoadingCandidates: candidatesCountQuery.isLoading,
     candidatesError: candidatesCountQuery.error,
     vote,
     isVoting: isPending,
-    voteError: error,
   };
 }

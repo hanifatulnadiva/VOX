@@ -7,16 +7,15 @@ export function ConnectWalletButton() {
   const { connect, connectors, isPending, error } = useConnect();
   const { disconnect } = useDisconnect();
 
-  const injectedConnector = connectors.find(
-    (connector) => connector.id === "injected",
-  );
+  const connector =
+    connectors.find((item) => item.id === "injected") ?? connectors[0];
 
   if (isConnected && address) {
     return (
       <div>
         <span>
           Terhubung: {address.slice(0, 6)}…{address.slice(-4)}
-        </span>
+        </span>{" "}
         <button type="button" onClick={() => disconnect()}>
           Putuskan wallet
         </button>
@@ -24,7 +23,7 @@ export function ConnectWalletButton() {
     );
   }
 
-  if (!injectedConnector) {
+  if (!connector) {
     return <p>Wallet browser seperti MetaMask tidak ditemukan.</p>;
   }
 
@@ -33,7 +32,7 @@ export function ConnectWalletButton() {
       <button
         type="button"
         disabled={isPending}
-        onClick={() => connect({ connector: injectedConnector })}
+        onClick={() => connect({ connector })}
       >
         {isPending ? "Menghubungkan..." : "Hubungkan wallet"}
       </button>

@@ -28,14 +28,16 @@ export const voxElectionAbi = [
   },
 ] as const;
 
-export function getElectionAddress(): Address | undefined {
+export function getElectionAddress(): { address?: Address; error?: string } {
   const value = process.env.NEXT_PUBLIC_VOX_ELECTION_ADDRESS;
 
-  if (!value) return undefined;
-
-  if (!isAddress(value)) {
-    throw new Error("Alamat VoxElection bukan alamat EVM yang valid.");
+  if (!value) {
+    return { error: "NEXT_PUBLIC_VOX_ELECTION_ADDRESS belum diatur." };
   }
 
-  return getAddress(value);
+  if (!isAddress(value)) {
+    return { error: "Alamat VoxElection bukan alamat EVM yang valid." };
+  }
+
+  return { address: getAddress(value) };
 }
